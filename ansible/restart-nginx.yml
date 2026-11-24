@@ -1,0 +1,15 @@
+---
+- name: Self Healing NGINX Recovery
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: Restart NGINX service
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+
+    - name: Verify NGINX service
+      ansible.builtin.service:
+        name: nginx
+        state: started
