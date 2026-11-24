@@ -1,0 +1,43 @@
+groups:
+  - name: server-alerts
+    rules:
+
+      # Alert when CPU usage is above 80%
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High CPU usage detected
+          description: CPU usage is above 80%.
+
+      # Alert when available memory is below 20%
+      - alert: LowMemory
+        expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 20
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Low memory detected
+          description: Available memory is below 20%.
+
+      # Alert when Node Exporter is down
+      - alert: NodeExporterDown
+        expr: up{job="node_exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Node Exporter is down
+          description: Node Exporter is not responding.
+
+      # Alert when the NGINX website is down
+      - alert: NginxWebsiteDown
+        expr: probe_success{job="blackbox"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: NGINX website is down
+          description: Website health check failed.
